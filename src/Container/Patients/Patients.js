@@ -1,57 +1,3 @@
-// import React from 'react';
-// import List from '../../Component/List/List';
-
-// function Medicines(props) {
-
-//     const orgData = [
-
-//         {
-//             id: 101,
-//             name: 'Abacavir',
-//             quantity: 25,
-//             price: 150,
-//             expiry: 2022
-//         },
-
-//         {
-//             id: 102,
-//             name: 'Eltrombopag',
-//             quantity: 90,
-//             price: 550,
-//             expiry: 2021
-//         },
-
-//         {
-//             id: 103,
-//             name: 'Meloxicam',
-//             quantity: 85,
-//             price: 450,
-//             expiry: 2025
-//         },
-
-//         {
-//             id: 104,
-//             name: 'Allopurinol',
-//             quantity: 50,
-//             price: 600,
-//             expiry: 2023
-//         },
-
-//         {
-//             id: 105,
-//             name: 'Phenytoin',
-//             quantity: 63,
-//             price: 250,
-//             expiry: 2021
-//         },
-
-//     ]
-//     return (
-//      <List data={orgData}/>
-//     );
-// }
-
-// export default Medicines;
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -66,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function Medicine(props) {
+function Patients(props) {
 
     const [open, setOpen] = React.useState(false);
     const [dopen, setDOpen] = React.useState(false);
@@ -90,19 +36,18 @@ function Medicine(props) {
 
 
     const handleInsert = (values) => {
-
         let id = Math.floor(Math.random() * 1000);
 
         let data = {
             id: id,
             ...values
         }
-        let localData = JSON.parse(localStorage.getItem('Medicine'));
+        let localData = JSON.parse(localStorage.getItem('Patients'));
         if (localData === null) {
-            localStorage.setItem("Medicine", JSON.stringify([data]));
+            localStorage.setItem("Patients", JSON.stringify([data]));
         } else {
             localData.push(data);
-            localStorage.setItem("Medicine", JSON.stringify(localData))
+            localStorage.setItem("Patients", JSON.stringify(localData))
 
         }
 
@@ -113,14 +58,14 @@ function Medicine(props) {
 
     let schema = yup.object().shape({
         name: yup.string().required("Please enter name"),
-        price: yup.number().required("please enter price").positive().integer(),
-        quantity: yup.string().required("please enter quantity"),
-        expiry: yup.string().required("please enter expiry"),
+        age: yup.number().required("please enter age"),
+        weight: yup.number().required("please enter weight"),
+        contact: yup.number().required("please enter contact"),
 
     });
 
    let handleUpdateData=(values)=>{
-    let localData = JSON.parse(localStorage.getItem('Medicine'));
+    let localData = JSON.parse(localStorage.getItem('Patients'));
      let lData = localData.map((l)=>{
             if(l.id === values.id){
                 return values;
@@ -128,7 +73,7 @@ function Medicine(props) {
                 return l;
             }
         })
-        localStorage.setItem('Medicine',JSON.stringify(lData));
+        localStorage.setItem('Patients',JSON.stringify(lData));
         console.log(lData);
        loadData();
        formikobj.resetForm();
@@ -139,9 +84,9 @@ function Medicine(props) {
     const formikobj = useFormik({
         initialValues: {
             name: '',
-            price: '',
-            quantity: '',
-            expiry: '',
+            age: '',
+            weight: '',
+            contact: '',
         },
         validationSchema: schema,
         onSubmit: values => {
@@ -156,10 +101,10 @@ function Medicine(props) {
     });
 
     const handleDelete = (params) => {
-        let localData = JSON.parse(localStorage.getItem('Medicine'));
+        let localData = JSON.parse(localStorage.getItem('Patients'));
         let fData = localData.filter((l) => l.id !== did)
         console.log(fData);
-        localStorage.setItem("Medicine", JSON.stringify(fData));
+        localStorage.setItem("Patients", JSON.stringify(fData));
         loadData();
         handleClose();
 
@@ -174,10 +119,10 @@ function Medicine(props) {
     formikobj.setValues(params.row)
    }
     const columns = [
-        { field: 'name', headerName: 'Medicine Name', width: 130 },
-        { field: 'price', headerName: 'price', width: 130 },
-        { field: 'quantity', headerName: 'quantity', width: 130 },
-        { field: 'expiry', headerName: 'expiry', width: 130 },
+        { field: 'name', headerName: 'Patients Name', width: 130 },
+        { field: 'age', headerName: 'Age ', width: 130 },
+        { field: 'weight', headerName: 'weight', width: 130 },
+        { field: 'contact', headerName: 'contact', width: 130 },
         {
             field: 'action',
             headerName: 'Action',
@@ -200,7 +145,7 @@ function Medicine(props) {
 
 
     const loadData = () => {
-        let localData = JSON.parse(localStorage.getItem('Medicine'));
+        let localData = JSON.parse(localStorage.getItem('Patients'));
         if (localData !== null) {
 
             setdata(localData)
@@ -217,6 +162,7 @@ function Medicine(props) {
 
     console.log(data);
     return (
+        <div>
         <div className='container'>
             <Button variant="outlined" onClick={handleClickOpen}>
                 Open form dialog
@@ -249,7 +195,7 @@ function Medicine(props) {
                 </DialogActions>
             </Dialog>
             <Dialog fullWidth open={open} onClose={handleClose}>
-                <DialogTitle>Medicine Detail</DialogTitle>
+                <DialogTitle>Patients Detail</DialogTitle>
                 <Formik values={formikobj}>
                     <Form onSubmit={handleSubmit}>
                         <DialogContent>
@@ -258,7 +204,7 @@ function Medicine(props) {
                                 value={values.name}
                                 margin="dense"
                                 name="name"
-                                label="Medicine Name"
+                                label="Patients Name"
                                 type="text"
                                 fullWidth
                                 variant="standard"
@@ -267,41 +213,41 @@ function Medicine(props) {
                             />
                             <p>{errors.name && touched.name ? errors.name : ''}</p>
                             <TextField
-                                value={values.price}
+                                value={values.age}
                                 margin="dense"
-                                name="price"
-                                label="Medicine Price"
+                                name="age"
+                                label="age"
                                 type="text"
                                 fullWidth
                                 variant="standard"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                             />
-                            <p>{errors.price && touched.price ? errors.price : ''}</p>
+                            <p>{errors.age && touched.age ? errors.age : ''}</p>
                             <TextField
-                                 value={values.quantity}
+                                 value={values.weight}
                                 margin="dense"
-                                name="quantity"
-                                label="Medicine Quantity"
+                                name="weight"
+                                label=" weight"
                                 type="text"
                                 fullWidth
                                 variant="standard"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                             />
-                            <p>{errors.quantity && touched.quantity ? errors.quantity : ''}</p>
+                            <p>{errors.weight && touched.weight ? errors.weight : ''}</p>
                             <TextField
-                                value={values.expiry}
+                                value={values.contact}
                                 margin="dense"
-                                name="expiry"
-                                label="Medicine Expiry"
+                                name="contact"
+                                label="contact"
                                 type="text"
                                 fullWidth
                                 variant="standard"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                             />
-                            <p>{errors.expiry && touched.expiry ? errors.expiry : ''}</p>
+                            <p>{errors.contact && touched.contact ? errors.contact : ''}</p>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose}>Cancel</Button>
@@ -317,8 +263,9 @@ function Medicine(props) {
                 </Formik>
 
             </Dialog>
+            </div>
         </div >
     );
 }
 
-export default Medicine;
+export default Patients;
