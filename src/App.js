@@ -10,7 +10,7 @@ import Home from './Container/Home';
 import Login from './Container/Login/Login';
 import Medicines from './Container/Medicines/Medicines';
 import Appointment from './Container/Appointment/Appointment';
-
+import Patients from './Container/Patients/Patients.js';
 
 
 
@@ -27,6 +27,9 @@ function App(props) {
       <Route exact path={"/contact"} component={Contact}/>
       <Route exact path={"/login"} component={Login}/>
       <Route exact path={"/appointment"} component={Appointment}/>
+    
+      <Route  exact path={"/patients"}  component={Patients}/>
+  
      </Switch>
       <Footer/>
     </div>

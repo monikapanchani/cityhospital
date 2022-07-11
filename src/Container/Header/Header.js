@@ -40,6 +40,10 @@ function Header(props) {
                 <NavLink exact className="nav-link scrollto" to={"/medicines"} >Medicines</NavLink>
               </li>
               <li>
+
+<NavLink exact className="nav-link scrollto" to={"/Patients"} >patients</NavLink>
+</li>
+              <li>
                 <NavLink exact className="nav-link scrollto" to={"/doctors"}>Doctors</NavLink>
               </li>
               <li>
@@ -58,6 +62,7 @@ function Header(props) {
             <span className="d-none d-md-inline">Login/ Signup</span>
           </a> */}
           <NavLink className="appointment-btn scrollto" to={"/login"}>Login/ Signup</NavLink>
+
         </div>
       </header>
     </div>
