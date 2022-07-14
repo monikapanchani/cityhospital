@@ -9,8 +9,10 @@ import Doctors from './Container/Doctors/Doctors';
 import Home from './Container/Home';
 import Login from './Container/Login/Login';
 import Medicines from './Container/Medicines/Medicines';
-import Appointment from './Container/Appointment/Appointment';
+// import Bookapt from './Container/Appointment/Bookapt';
 import Patients from './Container/Patients/Patients.js';
+import Bookapt from './Container/Appointment/Bookapt';
+import Listapt from './Container/Appointment/Listapt';
 
 
 
@@ -26,8 +28,8 @@ function App(props) {
       <Route exact path={"/about"} component={About}/>
       <Route exact path={"/contact"} component={Contact}/>
       <Route exact path={"/login"} component={Login}/>
-      <Route exact path={"/appointment"} component={Appointment}/>
-    
+      <Route exact path={"/Bookappoinment"} component={Bookapt} />
+        <Route exact path={"/Listappoinment"} component={Listapt} />
       <Route  exact path={"/patients"}  component={Patients}/>
   
      </Switch>
