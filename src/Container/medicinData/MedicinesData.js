@@ -1,28 +1,104 @@
 import React, { useEffect, useState } from 'react';
+import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import * as yup from 'yup';
 import { Form, Formik, useFormik } from 'formik';
 import { DataGrid } from '@mui/x-data-grid';
-import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 
-function Medicine(props) {
+function MedicineData() {
+    const [data, setdata] = useState([]);
+    const [dopen, setdOpen] = React.useState(false);
+    const [did, setdid] = useState(0);
+    const [update, setupdate] = useState(false);
+    const [fmdata,setfmdata] = useState([]);
+
+    const handledClickOpen = () => {
+        setdOpen(true);
+    };
+
+    const handledClose = () => {
+        setdOpen(false);
+    };
+
+    const loaddata = () => {
+        const localdata = JSON.parse(localStorage.getItem("Medicines"));
+
+        if (localdata !== null) {
+            setdata(localdata)
+        }
+    }
+
+    const handleinsert = (values) => {
+
+        const localdata = JSON.parse(localStorage.getItem("Medicines"));
+
+        const m_id = Math.floor(Math.random() * 100);
+
+        const data = {
+            id: m_id,
+            ...values
+        }
+        if (localdata === null) {
+            localStorage.setItem("Medicines", JSON.stringify([data]));
+        } else {
+            localdata.push(data);
+            localStorage.setItem("Medicines", JSON.stringify(localdata));
+        }
+
+        handleClose()
+        formik.resetForm()
+        loaddata()
+    }
+
+    const handleupdate = (values) => {
+
+        const localdata = JSON.parse(localStorage.getItem("Medicines"));
+        const lData = localdata.map((l) => {
+            if (l.id === values.id) {
+                return values;
+            } else {
+                return l;
+            }
+        })
+        localStorage.setItem("Medicines", JSON.stringify(lData));
+        loaddata()
+        formik.resetForm();
+        setupdate(false);
+
+    }
+
+    let schema = yup.object().shape({
+        name: yup.string().required("Please enter your medicine name."),
+        quantity: yup.number().positive().integer().required("Please enter your medicine quantity."),
+        price: yup.number().positive().integer().required("Please enter your medicine price."),
+        expiry: yup.number().positive().integer().required("Please enter your medicine expiry year.")
+    });
+
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            quantity: '',
+            price: '',
+            expiry: '',
+        },
+        validationSchema: schema,
+        onSubmit: values => {
+            if (update) {
+                handleupdate(values);
+            } else {
+                handleinsert(values);
+            }
+        },
+    });
 
     const [open, setOpen] = React.useState(false);
-    const [dopen, setDOpen] = React.useState(false);
-    const [data, setdata] = useState([]);
-    const [did, setDid] = useState(0);
-    const [update, setUpdate]=useState(false);
-
-    const handleDClickOpen = () => {
-        setDOpen(true);
-    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -30,241 +106,172 @@ function Medicine(props) {
 
     const handleClose = () => {
         setOpen(false);
-        setDOpen(false);
     };
 
-
-
-    const handleInsert = (values) => {
-
-        let id = Math.floor(Math.random() * 1000);
-
-        let data = {
-            id: id,
-            ...values
-        }
-        let localData = JSON.parse(localStorage.getItem('Medicine'));
-        if (localData === null) {
-            localStorage.setItem("Medicine", JSON.stringify([data]));
-        } else {
-            localData.push(data);
-            localStorage.setItem("Medicine", JSON.stringify(localData))
-
-        }
-
-        loadData();
-        handleClose();
-        formikobj.resetForm();
+    const handleedit = (params) => {
+        handleClickOpen()
+        setupdate(true)
+        formik.setValues(params.row)
     }
 
-    let schema = yup.object().shape({
-        name: yup.string().required("Please enter name"),
-        price: yup.number().required("please enter price").positive().integer(),
-        quantity: yup.string().required("please enter quantity"),
-        expiry: yup.string().required("please enter expiry"),
+    const handledelete = (params) => {
+        const localdata = JSON.parse(localStorage.getItem("Medicines"));
+        const filterdata = localdata.filter((v) => v.id !== did);
 
-    });
+        localStorage.setItem("Medicines", JSON.stringify(filterdata));
 
-   let handleUpdateData=(values)=>{
-    let localData = JSON.parse(localStorage.getItem('Medicine'));
-     let lData = localData.map((l)=>{
-            if(l.id === values.id){
-                return values;
-            }else{
-                return l;
-            }
-        })
-        localStorage.setItem('Medicine',JSON.stringify(lData));
-        console.log(lData);
-       loadData();
-       formikobj.resetForm();
-       handleClose();
-       setUpdate(false); 
+        handledClose()
+        setdid(0)
+        loaddata()
     }
 
-    const formikobj = useFormik({
-        initialValues: {
-            name: '',
-            price: '',
-            quantity: '',
-            expiry: '',
-        },
-        validationSchema: schema,
-        onSubmit: values => {
-            if(update){
-                handleUpdateData(values);
-            }else{
-
-                handleInsert(values)
-            }
-        
-        },
-    });
-
-    const handleDelete = (params) => {
-        let localData = JSON.parse(localStorage.getItem('Medicine'));
-        let fData = localData.filter((l) => l.id !== did)
-        console.log(fData);
-        localStorage.setItem("Medicine", JSON.stringify(fData));
-        loadData();
-        handleClose();
-
-    }
-
-   const handleEdit=(params)=>{
-    console.log(params);
-    handleClickOpen();
-    
-    setUpdate(true);
-
-    formikobj.setValues(params.row)
-   }
     const columns = [
-        { field: 'name', headerName: 'Medicine Name', width: 130 },
-        { field: 'price', headerName: 'price', width: 130 },
-        { field: 'quantity', headerName: 'quantity', width: 130 },
-        { field: 'expiry', headerName: 'expiry', width: 130 },
+        { field: 'name', headerName: 'Name', width: 70 },
+        { field: 'quantity', headerName: 'Quantity', width: 130 },
+        { field: 'price', headerName: 'Price', width: 130 },
+        { field: 'expiry', headerName: 'Expiry', width: 130 },
         {
-            field: 'action',
-            headerName: 'Action',
-            width: 130,
+            field: 'action', headerName: 'Action', width: 130,
             renderCell: (params) => (
                 <>
-                    <IconButton aria-label="delete" size="large" onClick={() => { handleDClickOpen(); setDid(params.id) }}>
+                    <IconButton aria-label="delete" size="lg" style={{ color: 'red' }} onClick={() => { handledClickOpen(); setdid(params.id) }} >
                         <DeleteIcon fontSize="inherit" />
                     </IconButton>
-                    <IconButton aria-label="edit" size="large" onClick={() =>  handleEdit(params) }>
+                    <IconButton aria-label="edit" size='lg' color='primary' onClick={() => { handleedit(params) }}>
                         <EditIcon fontSize="inherit" />
                     </IconButton>
                 </>
-
             )
         },
-
-
     ];
 
-
-    const loadData = () => {
-        let localData = JSON.parse(localStorage.getItem('Medicine'));
-        if (localData !== null) {
-
-            setdata(localData)
-        }
-
+    const handlesearch = (searchvalue) => {
+        const localdata = JSON.parse(localStorage.getItem("Medicines"));
+        const fdata = localdata.filter((l) => (
+            l.name.toLowerCase().includes(searchvalue) ||
+            l.quantity.toString().includes(searchvalue) ||
+            l.price.toString().includes(searchvalue) ||
+            l.expiry.toString().includes(searchvalue)
+        ))
+        setfmdata(fdata)
     }
+    const filtdata = fmdata.length > 0 ? fmdata : data;
 
-    useEffect(
-        () => {
-            loadData();
-        }, [])
+    let { errors, handleBlur, handleSubmit, handleChange, touched, values } = formik;
 
-    const { handleChange, handleSubmit, handleBlur, errors, touched, values } = formikobj
-
-    console.log(data);
+    useEffect(() => {
+        loaddata()
+    }, [])
     return (
-        <div className='container'>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Open form dialog
-            </Button>
-            <div style={{ height: 400, width: '100%' }}>
+        <>
+            <h1>Medicines</h1>
+            <div>
+                <Button variant="outlined" onClick={handleClickOpen}>
+                    Add Medicines
+                </Button>
+                <div style={{ textAlign: "center" }}>
+                    <TextField style={{ width: "80%" }}
+                        margin="dense"
+                        name='Search'
+                        label="Search medicine data"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) => handlesearch(e.target.value)}
+                    />
+                </div>
+                <Dialog
+                    open={dopen}
+                    onClose={handledClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Are you sure to delete?"}
+                    </DialogTitle>
+                    <DialogActions>
+                        <Button onClick={handledClose}>No</Button>
+                        <Button onClick={handledelete} autoFocus>
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog fullWidth open={open} onClose={handleClose}>
+                    <DialogTitle>Add Medicines</DialogTitle>
+                    <Formik values={formik}>
+                        <Form onSubmit={handleSubmit}>
+                            <DialogContent>
+
+                                <TextField
+                                    margin="dense"
+                                    name='name'
+                                    label="Name"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    value={values.name}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                                {errors.name && touched.name ? <p style={{ color: "#1976d2" }}>{errors.name}</p> : null}
+                                <TextField
+                                    margin="dense"
+                                    name='quantity'
+                                    label="Quantity"
+                                    fullWidth
+                                    variant="standard"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.quantity}
+                                />
+                                {errors.quantity && touched.quantity ? <p style={{ color: "#1976d2" }}>{errors.quantity}</p> : null}
+                                <TextField
+                                    margin="dense"
+                                    name='price'
+                                    label="Price"
+                                    fullWidth
+                                    variant="standard"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.price}
+                                />
+                                {errors.price && touched.price ? <p style={{ color: "#1976d2" }}>{errors.price}</p> : null}
+                                <TextField
+                                    margin="dense"
+                                    name='expiry'
+                                    label="Expiry"
+                                    fullWidth
+                                    variant="standard"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.expiry}
+                                />
+                                {errors.expiry && touched.expiry ? <p style={{ color: "#1976d2" }}>{errors.expiry}</p> : null}
+
+                            </DialogContent>
+
+                            <DialogActions>
+                                <Button onClick={handleClose}>Cancel</Button>
+                                {
+                                    update ? <Button type='submit' onClick={handleClose}>update</Button> :
+                                        <Button type='submit'>Submit</Button>
+                                }
+                            </DialogActions>
+                        </Form>
+                    </Formik>
+                </Dialog>
+            </div>
+            <div style={{ height: 400, width: '80%', margin: '25px auto 0' }}>
                 <DataGrid
-                    rows={data}
+                    rows={filtdata}
                     columns={columns}
                     pageSize={5}
                     rowsPerPageOptions={[5]}
-                    checkboxSelection
                 />
             </div>
-            <Dialog fullWidth
-                open={dopen}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {"Are you sure to Delete?"}
-                </DialogTitle>
-                <DialogContent>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>No</Button>
-                    <Button onClick={handleDelete} autoFocus>
-                        Yes
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog fullWidth open={open} onClose={handleClose}>
-                <DialogTitle>Medicine Detail</DialogTitle>
-                <Formik values={formikobj}>
-                    <Form onSubmit={handleSubmit}>
-                        <DialogContent>
+        </>
 
-                            <TextField
-                                value={values.name}
-                                margin="dense"
-                                name="name"
-                                label="Medicine Name"
-                                type="text"
-                                fullWidth
-                                variant="standard"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                            />
-                            <p>{errors.name && touched.name ? errors.name : ''}</p>
-                            <TextField
-                                value={values.price}
-                                margin="dense"
-                                name="price"
-                                label="Medicine Price"
-                                type="text"
-                                fullWidth
-                                variant="standard"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                            />
-                            <p>{errors.price && touched.price ? errors.price : ''}</p>
-                            <TextField
-                                 value={values.quantity}
-                                margin="dense"
-                                name="quantity"
-                                label="Medicine Quantity"
-                                type="text"
-                                fullWidth
-                                variant="standard"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                            />
-                            <p>{errors.quantity && touched.quantity ? errors.quantity : ''}</p>
-                            <TextField
-                                value={values.expiry}
-                                margin="dense"
-                                name="expiry"
-                                label="Medicine Expiry"
-                                type="text"
-                                fullWidth
-                                variant="standard"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                            />
-                            <p>{errors.expiry && touched.expiry ? errors.expiry : ''}</p>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleClose}>Cancel</Button>
-                           { 
-                           update === (true) ?
-                            <Button type='submit'>Update</Button>
-                            :
-                            <Button type='submit'>Submit</Button>
-                           }
-                        </DialogActions>
-
-                    </Form>
-                </Formik>
-
-            </Dialog>
-        </div >
     );
 }
 
-export default Medicine;
+export default MedicineData;

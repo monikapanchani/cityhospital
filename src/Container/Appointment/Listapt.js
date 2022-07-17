@@ -3,11 +3,8 @@ import { NavLink, useHistory } from 'react-router-dom';
 import { Card, CardBody, CardTitle, CardText, CardSubtitle, Button } from "reactstrap";
 
 function Listapt(props) {
-
     const history = useHistory();
-
     const localdata = JSON.parse(localStorage.getItem("apt"));
-
     const [data, setdata] = useState([])
 
     useEffect(() => {
@@ -17,25 +14,18 @@ function Listapt(props) {
 
     const getdata = () => {
         const localdata = JSON.parse(localStorage.getItem('apt'));
-
         setdata(localdata);
-
     }
 
     const handleEdit = (id) => {
-
         history.push("/Bookappoinment", { id: id })
     }
-
 
     const handleDelete = (id) => {
 
         let localData = JSON.parse(localStorage.getItem('apt'));
-
         let fData = localData.filter((l) => l.id !== id)
-
         localStorage.setItem("apt", JSON.stringify(fData));
-
         getdata();
     }
 

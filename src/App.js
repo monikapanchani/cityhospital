@@ -13,6 +13,8 @@ import Medicines from './Container/Medicines/Medicines';
 import Patients from './Container/Patients/Patients.js';
 import Bookapt from './Container/Appointment/Bookapt';
 import Listapt from './Container/Appointment/Listapt';
+import PublicRoute from './Routing/PublicRoute';
+import PrivateRoute from './Routing/PrivateRoute';
 
 
 
@@ -21,16 +23,17 @@ function App(props) {
     <div>
       <Header />
       <Switch>
-      <Route  exact path={"/"} component={Home}/>
-      <Route exact path={"/department"} component={Department}/>
-      <Route exact path={"/medicines"} component={Medicines}/>
-      <Route exact path={"/doctors"} component={Doctors}/>
-      <Route exact path={"/about"} component={About}/>
-      <Route exact path={"/contact"} component={Contact}/>
-      <Route exact path={"/login"} component={Login}/>
-      <Route exact path={"/Bookappoinment"} component={Bookapt} />
-        <Route exact path={"/Listappoinment"} component={Listapt} />
-      <Route  exact path={"/patients"}  component={Patients}/>
+      <PublicRoute  exact path={"/"} component={Home}/>
+      <PublicRoute exact path={"/department"} component={Department}/>
+      <PublicRoute exact path={"/medicines"} component={Medicines}/>
+      <PublicRoute exact path={"/doctors"} component={Doctors}/>
+      <PublicRoute exact path={"/about"} component={About}/>
+      <PublicRoute exact path={"/contact"} component={Contact}/>
+      <PublicRoute exact path={"/login"} component={Login}/>
+      <PublicRoute  exact path={"/patients"}  component={Patients}/>
+
+      <PrivateRoute exact path={"/Bookappoinment"} component={Bookapt} />
+      <PrivateRoute exact path={"/Listappoinment"} component={Listapt} />
   
      </Switch>
       <Footer/>

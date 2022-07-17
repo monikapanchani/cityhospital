@@ -11,7 +11,7 @@ function Footer(props) {
         <p>
           F-505, <br />
           Inovative Plazza<br />
-          New india, India<br /><br />
+          New Delhi, India<br /><br />
           <strong>Phone:</strong> +91 9988776655<br />
           <strong>Email:</strong> cityhospital@example.com<br />
         </p>

@@ -4,31 +4,23 @@ import { Form, Formik, useFormik } from 'formik';
 import { NavLink, useHistory } from 'react-router-dom';
 
 function Bookapt(props) {
-
-
     const [update, setupdate] = useState(false)
 
     useEffect(() => {
 
+        if (props.location.state !== null && props.location.state !== undefined) {
         let localdata = JSON.parse(localStorage.getItem("apt"));
 
-        if (props.location.state !== null && props.location.state !== undefined) {
-
             let ldata = props.location.state;
-
             const edata = localdata.filter((l) => l.id === ldata.id);
-
             formikObj.setValues(edata[0]);
-
             setupdate(true)
         }
-
         history.replace();
 
     }, [])
 
     const history = useHistory();
-// 
     const handleinsert = (values) => {
 
         const id = Math.floor(Math.random() * 1000);
@@ -41,7 +33,6 @@ function Bookapt(props) {
         console.log(data);
 
         const localdata = JSON.parse(localStorage.getItem("apt"));
-
         if (localdata === null) {
             localStorage.setItem("apt", JSON.stringify([data]))
         } else {
@@ -53,7 +44,6 @@ function Bookapt(props) {
     }
 
     const handleUpdate = (values) => {
-
         const localData = JSON.parse(localStorage.getItem('apt'));
 
         let uData = localData.map((l) => {
@@ -66,19 +56,14 @@ function Bookapt(props) {
             }
 
         })
-        console.log(uData);
-
-    
+        // console.log(uData);
         localStorage.setItem('apt', JSON.stringify(uData));
-
         history.push('/Listappoinment');
-
         setupdate(false);
-
         history.replace();
-
         formikObj.resetForm();
     }
+    
     let schema = yup.object().shape({
         name: yup.string().required('please enter name'),
         email: yup.string().required('please enter email'),
@@ -105,10 +90,6 @@ function Bookapt(props) {
             }else{
                 handleinsert(values);
             }
-            
-
-            
-
         },
     });
 
@@ -228,6 +209,7 @@ function Bookapt(props) {
                                     <textarea className="form-control"
                                         value={values.message}
                                         name="message"
+                                        id='message'
                                         rows={3}
                                         placeholder="Message"
                                         defaultValue={""}
