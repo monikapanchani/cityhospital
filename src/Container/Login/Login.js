@@ -49,7 +49,15 @@ function Login(props) {
     initialValues:initVal ,
     validationSchema: schema,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      if(usertype === 'Login'){
+        handleLogin(values);
+    }else{
+
+        // alert(JSON.stringify(values, null, 2));
+        dispatch(singupAction(values))
+       
+    }
+
     },
   });
   const { errors, handleSubmit, handleChange, handleBlur, touched } = formikObj;
